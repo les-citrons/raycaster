@@ -59,6 +59,7 @@ struct ray_view cast_ray(struct vect pos, double angle, struct board *b) {
 	double face_offs_y = copysign(0.500001, direction.y);
 
 	if (direction.x != 0) {
+		// Check each potential x-axis facing wall
 		for (int i = 0; i < render_distance; i++) {
 			double nextx = round(posx.x) + face_offs_x;
 			posx.y += tan(a) * (nextx - posx.x);
@@ -70,6 +71,7 @@ struct ray_view cast_ray(struct vect pos, double angle, struct board *b) {
 	}
 
 	if (direction.y != 0) {
+		// Check each potential y-axis facing wall
 		for (int i = 0; i < render_distance; i++) {
 			double nexty = round(posy.y) + face_offs_y;
 			posy.x += cotangent(a) * (nexty - posy.y);
@@ -85,6 +87,8 @@ struct ray_view cast_ray(struct vect pos, double angle, struct board *b) {
 	distx = sqr(posx.x - pos.x) + sqr(posx.y - pos.y);
 	disty = sqr(posy.x - pos.x) + sqr(posy.y - pos.y);
 
+	// We choose the closest point of intersection 
+	// between x-axis and y-axis facing walls
 	if ((distx < disty && distx != 0) || disty == 0)
 	{
 		copy_vect(&pos, &posx);
@@ -114,6 +118,7 @@ void draw_view(struct game *g) {
 		struct ray_view cast = cast_ray(p->pos, angle, &g->board);
 
 		if (cast.hit_tile != 0) {
+			// multiply by cosine for very poor fisheye correction
 			double dist = sqrt(cast.dist) * cos(d2r(angle - p->angle)); 
 
 			int height = view_height / dist;

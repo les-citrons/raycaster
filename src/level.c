@@ -45,12 +45,12 @@ void move(struct game *g) {
 
 	struct vect rotated, newpos;
 
-	copy_vect(&rotated, &p->velocity);
+	rotated = p->velocity;
 	rotate_vect(p->angle, &rotated);
-	copy_vect(&newpos, &p->pos);
+	newpos = p->pos;
 	add_vect(&newpos, &rotated);
 
-	copy_vect(&p->pos, &newpos);
+	p->pos = newpos;
 }
 
 void game_step(struct game *g) {

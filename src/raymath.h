@@ -16,7 +16,6 @@ struct vect {
 	double y;
 };
 
-void copy_vect(struct vect *a, const struct vect *b);
 void add_vect(struct vect *a, const struct vect *b);
 void mult_vect(struct vect *a, const struct vect *b);
 void rotate_vect(double angle, struct vect *a);

@@ -3,11 +3,6 @@
 #include <math.h>
 #include "raymath.h"
 
-void copy_vect(struct vect *a, const struct vect *b) {
-	a->x = b->x;
-	a->y = b->y;
-}
-
 void add_vect(struct vect *a, const struct vect *b) {
 	a->x += b->x;
 	a->y += b->y;
@@ -31,7 +26,7 @@ void rotate_vect(double angle, struct vect *a) {
 	result.x += a->x * cosa;
 	result.y += a->x * sina;
 
-	copy_vect(a, &result);
+	*a = result;
 }
 
 double cotangent(double radians) {

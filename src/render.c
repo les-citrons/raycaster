@@ -52,8 +52,7 @@ struct ray_view cast_ray(struct vect pos, double angle, struct board *b) {
 	tx = ty = 0;
 
 	struct vect posx, posy;
-	copy_vect(&posx, &pos);
-	copy_vect(&posy, &pos);
+	posy = posx = pos;
 
 	double face_offs_x = copysign(0.500001, direction.x);
 	double face_offs_y = copysign(0.500001, direction.y);
@@ -91,11 +90,11 @@ struct ray_view cast_ray(struct vect pos, double angle, struct board *b) {
 	// between x-axis and y-axis facing walls
 	if ((distx < disty && distx != 0) || disty == 0)
 	{
-		copy_vect(&pos, &posx);
+		pos = posx;
 		t = tx;
 		dist = distx;
 	} else {
-		copy_vect(&pos, &posy);
+		pos = posy;
 		t = ty;
 		dist = disty;
 	}

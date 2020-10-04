@@ -1,16 +1,21 @@
 
 #define _GNU_SOURCE
 #include <math.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_render.h>
+#include <SDL2/SDL_image.h>
 #include "render.h"
 
 SDL_Window *g_window = NULL;
 SDL_Renderer *g_renderer = NULL;
 SDL_Texture *g_wintex = NULL;
 
+SDL_Texture *g_test_tex = NULL;
+
 int screen_width = 700;
 int screen_height = 700;
 
-int render_distance = 90;
+int render_distance = 50;
 double fov = 100;
 
 int debug_view = 0;
@@ -37,6 +42,7 @@ struct ray_view {
 	struct vect hit_point;
 	tile hit_tile;
 	double dist;
+	int facing_x;
 };
 
 struct ray_view cast_ray(struct vect pos, double angle, struct board *b) {
@@ -86,20 +92,24 @@ struct ray_view cast_ray(struct vect pos, double angle, struct board *b) {
 	distx = sqr(posx.x - pos.x) + sqr(posx.y - pos.y);
 	disty = sqr(posy.x - pos.x) + sqr(posy.y - pos.y);
 
+	int facing_x;
+
 	// We choose the closest point of intersection 
 	// between x-axis and y-axis facing walls
 	if ((distx < disty && distx != 0) || disty == 0)
 	{
+		facing_x = 1;
 		pos = posx;
 		t = tx;
-		dist = distx;
+		dist = sqrt(distx);
 	} else {
+		facing_x = 0;
 		pos = posy;
 		t = ty;
-		dist = disty;
+		dist = sqrt(disty);
 	}
 
-	struct ray_view result = {pos, t, dist};
+	struct ray_view result = {pos, t, dist, facing_x};
 	return result;
 }
 
@@ -118,13 +128,33 @@ void draw_view(struct game *g) {
 
 		if (cast.hit_tile != 0) {
 			// multiply by cosine for very poor fisheye correction
-			double dist = sqrt(cast.dist) * cos(d2r(angle - p->angle)); 
+			double dist = cast.dist * cos(d2r(angle - p->angle)); 
 
 			int height = view_height / dist;
-			int brightness = 255 / fmax(1, log(dist * 0.2 + 2));
-			SDL_Rect col_rect = {i + 1, screen_height/2 - height/2, 1, height};
+			SDL_Rect screen_rect = {i + 1, screen_height/2 - height/2, 1, height};
+			
+			// Figure out where the ray hits the texture
+			int tex_width, tex_height;
+			SDL_QueryTexture(g_test_tex, NULL, NULL, &tex_width, &tex_height);
+
+			double hit_point;
+			if (cast.facing_x)
+				hit_point = cast.hit_point.y - (round(cast.hit_point.y) - 0.5);
+			else
+				hit_point = cast.hit_point.x - (round(cast.hit_point.x) - 0.5);
+			int tex_pos = tex_width * hit_point;
+
+			SDL_Rect tex_rect = {tex_pos, 0, 1, tex_height};
+
+			int brightness = 255 / fmax(1, log(dist * 0.2 + 2) + 0.15);
+			SDL_SetTextureColorMod(g_test_tex, brightness, brightness, brightness);
+
+			SDL_RenderCopy(g_renderer, g_test_tex, &tex_rect, &screen_rect);
+
+			/*
 			SDL_SetRenderDrawColor(g_renderer, brightness, brightness, brightness, brightness);
-			SDL_RenderDrawRect(g_renderer, &col_rect);
+			SDL_RenderDrawRect(g_renderer, &screen_rect);
+			*/
 		}
 	}
 
@@ -183,7 +213,24 @@ void init(const char *title) {
 	                                              SDL_RENDERER_PRESENTVSYNC |
 	                                              SDL_RENDERER_TARGETTEXTURE);
 	if (g_renderer == NULL) report_error();
+
+	int flags = IMG_INIT_PNG;
+	if (!(IMG_Init(flags) & flags)) {
+		printf("æ: %s\n", IMG_GetError());
+		exit(-1);
+	}
 	
+	SDL_Surface *s = IMG_Load("test_tex.png");
+	if (s == NULL)
+	{
+		printf("æ: %s\n", IMG_GetError());
+		exit(-1);
+	}
+	g_test_tex = SDL_CreateTextureFromSurface(g_renderer, s);
+	if (g_test_tex == NULL) report_error();
+
+	SDL_FreeSurface(s);
+
 	make_wintex(); 
 	
 	SDL_SetRenderDrawColor(g_renderer, 0xFF, 0xFF, 0xFF, 0xFF);

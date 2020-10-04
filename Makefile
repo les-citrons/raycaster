@@ -1,6 +1,6 @@
 CC = gcc
 CFLAGS = -g -Wall
-LFLAGS = -lm -lSDL2
+LFLAGS = -lm -lSDL2 -lSDL2_image
 
 NAME = raycast
 

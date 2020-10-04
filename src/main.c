@@ -5,4 +5,6 @@
 int main(int argc, char *argv[]) {
 	start();
 	mainloop();
+
+	return 0;
 }

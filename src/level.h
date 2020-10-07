@@ -32,9 +32,9 @@ tile tile_at(const struct board *b, unsigned int x, unsigned int y);
 void set_tile(struct board *b, int x, int y, tile t);
 void destroy_board(struct board *b);
 
-#define FRICTION 0.3 
-#define SPEED 0.04
-#define ACCEL 0.02
+#define FRICTION 0.2 
+#define SPEED 0.05
+#define ACCEL 0.01
 void init_player(struct player *p);
 
 void game_step(struct game *g);

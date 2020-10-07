@@ -12,8 +12,8 @@ SDL_Texture *g_wintex = NULL;
 
 SDL_Texture *g_test_tex = NULL;
 
-int screen_width = 700;
-int screen_height = 700;
+int screen_width = 1280;
+int screen_height = 720;
 
 int render_distance = 50;
 double fov = 100;
@@ -43,6 +43,7 @@ struct ray_view {
 	tile hit_tile;
 	double dist;
 	int facing_x;
+	struct vect direction;
 };
 
 struct ray_view cast_ray(struct vect pos, double angle, struct board *b) {
@@ -109,7 +110,7 @@ struct ray_view cast_ray(struct vect pos, double angle, struct board *b) {
 		dist = sqrt(disty);
 	}
 
-	struct ray_view result = {pos, t, dist, facing_x};
+	struct ray_view result = {pos, t, dist, facing_x, direction};
 	return result;
 }
 
@@ -125,7 +126,7 @@ void draw_view(struct game *g) {
 	double viewplane_r = tan(d2r(fov/2));
 	double viewplane_w = viewplane_r - viewplane_l;
 
-	int view_height = screen_width / fov * 100;
+	int view_height = screen_width / fov * 84;
 	for (int i = 0; i < screen_width; i++) {
 		// Cast one ray per column of pixels
 		// Cast rays for equidistant points on the view plane
@@ -144,10 +145,16 @@ void draw_view(struct game *g) {
 			SDL_QueryTexture(g_test_tex, NULL, NULL, &tex_width, &tex_height);
 
 			double hit_point;
-			if (cast.facing_x)
+			if (cast.facing_x) {
 				hit_point = cast.hit_point.y - (round(cast.hit_point.y) - 0.5);
-			else
+				if (cast.direction.x < 0)
+					hit_point = 1 - hit_point;
+			}
+			else {
 				hit_point = cast.hit_point.x - (round(cast.hit_point.x) - 0.5);
+				if (cast.direction.y > 0)
+					hit_point = 1 - hit_point;
+			}
 			int tex_pos = tex_width * hit_point;
 
 			SDL_Rect tex_rect = {tex_pos, 0, 1, tex_height};

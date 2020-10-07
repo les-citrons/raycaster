@@ -6,6 +6,9 @@
 static inline double d2r(double angle) {
 	return angle * (PI * 2 / 360);
 }
+static inline double r2d(double angle) {
+	return angle / (PI * 2 / 360);
+}
 
 static inline double sqr(double x) {
 	return x*x;

@@ -118,17 +118,21 @@ void draw_view(struct game *g) {
 
 	begin_render();
 	struct player *p = &g->player;
+	double p_ang = d2r(p->angle);
+
+	double viewplane_l = tan(d2r(-fov/2));
+	double viewplane_r = tan(d2r(fov/2));
+	double viewplane_w = viewplane_r - viewplane_l;
 
 	int view_height = screen_width / fov * 100;
 	for (int i = 0; i < screen_width; i++) {
 		// Cast one ray per column of pixels
-		double angle = p->angle - (fov / 2) + (i * (fov / screen_width)); 
+		double angle = p_ang + atan(viewplane_w/screen_width*i - viewplane_w/2);
 
-		struct ray_view cast = cast_ray(p->pos, angle, &g->board);
+		struct ray_view cast = cast_ray(p->pos, r2d(angle), &g->board);
 
 		if (cast.hit_tile != 0) {
-			// multiply by cosine for very poor fisheye correction
-			double dist = cast.dist * cos(d2r(angle - p->angle)); 
+			double dist = cos(angle - p_ang) * cast.dist;
 
 			int height = view_height / dist;
 			SDL_Rect screen_rect = {i + 1, screen_height/2 - height/2, 1, height};
@@ -188,12 +192,19 @@ void draw_debug(struct game *g) {
 		}
 	}
 
+	double p_ang = d2r(p->angle);
+
+	double viewplane_l = tan(d2r(-fov/2));
+	double viewplane_r = tan(d2r(fov/2));
+	double viewplane_w = viewplane_r - viewplane_l;
+
 	for (int i = 0; i < screen_width; i++) {
 		// Cast one ray per column of pixels
-		double angle = p->angle - (fov / 2) + (i * (fov / screen_width)); 
+		double angle = p_ang + atan(viewplane_w/screen_width*i - viewplane_w/2);
+
+		struct ray_view cast = cast_ray(p->pos, r2d(angle), &g->board);
 
 		SDL_SetRenderDrawColor(g_renderer, 0x00, 0x00, 0xFF, 0xFF);
-		struct ray_view cast = cast_ray(p->pos, angle, &g->board);
 		SDL_RenderDrawLine(g_renderer, screenx, screeny, 
 				cast.hit_point.x * zoom, cast.hit_point.y * zoom);
 	}

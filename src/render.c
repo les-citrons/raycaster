@@ -120,6 +120,7 @@ void draw_view(struct game *g) {
 	struct player *p = &g->player;
 	double p_ang = d2r(p->angle);
 
+	// Get the dimensions of the view plane from the fov
 	double viewplane_l = tan(d2r(-fov/2));
 	double viewplane_r = tan(d2r(fov/2));
 	double viewplane_w = viewplane_r - viewplane_l;
@@ -127,6 +128,7 @@ void draw_view(struct game *g) {
 	int view_height = screen_width / fov * 100;
 	for (int i = 0; i < screen_width; i++) {
 		// Cast one ray per column of pixels
+		// Cast rays for equidistant points on the view plane
 		double angle = p_ang + atan(viewplane_w/screen_width*i - viewplane_w/2);
 
 		struct ray_view cast = cast_ray(p->pos, r2d(angle), &g->board);

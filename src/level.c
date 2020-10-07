@@ -50,10 +50,18 @@ void move(struct game *g) {
 	newpos = p->pos;
 	add_vect(&newpos, &rotated);
 
-	if (tile_at(&g->board, round(newpos.x /*+ 0.25*/), round(p->pos.y)) == 0)
-		p->pos.x = newpos.x;
-	if (tile_at(&g->board, round(p->pos.x), round(newpos.y /*+ 0.25*/)) == 0)
-		p->pos.y = newpos.y;
+
+	if (tile_at(&g->board, round(newpos.x + 0.2), round(p->pos.y)) != 0) 
+		newpos.x = round(newpos.x + 0.2) - 0.7;
+	else if (tile_at(&g->board, round(newpos.x - 0.2), round(p->pos.y)) != 0) 
+		newpos.x = round(newpos.x - 0.2) + 0.7;
+
+	if (tile_at(&g->board, round(p->pos.x), round(newpos.y + 0.2)) != 0)
+		newpos.y = round(newpos.y + 0.2) - 0.7;
+	else if (tile_at(&g->board, round(p->pos.x), round(newpos.y - 0.2)) != 0)
+		newpos.y = round(newpos.y - 0.2) + 0.7;
+
+	p->pos = newpos;
 }
 
 void game_step(struct game *g) {

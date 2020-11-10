@@ -10,6 +10,8 @@ struct input_def {
 	SDL_Keycode value;
 };
 
+double mouse_sensitivity;
+int mouse_motion; 
 int check_key(struct input_def *i); 
 
 #endif

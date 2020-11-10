@@ -14,22 +14,22 @@ struct input_def i_move_backward = {
 
 struct input_def i_strafe_left = {
 	"Strafe left",
-	SDLK_q,
+	SDLK_a,
 };
 
 struct input_def i_strafe_right = {
 	"Strafe right",
-	SDLK_e,
+	SDLK_d,
 };
 
 struct input_def i_look_left = {
 	"Look left",
-	SDLK_a,
+	SDLK_q,
 };
 
 struct input_def i_look_right = {
 	"Look right",
-	SDLK_d,
+	SDLK_e,
 };
 
 struct input_def i_action = {
@@ -47,6 +47,11 @@ struct input_def i_fast_look_mod = {
 	SDLK_RSHIFT
 };
 
+struct input_def i_unlock_mouse = {
+	"Unlock mouse",
+	SDLK_ESCAPE
+};
+
 struct input_def *input_defs[] = {
 	&i_move_forward,
 	&i_move_backward,
@@ -55,6 +60,7 @@ struct input_def *input_defs[] = {
 	&i_look_left,
 	&i_look_right,
 	&i_action,
+	&i_unlock_mouse,
 	&i_debug
 };
 

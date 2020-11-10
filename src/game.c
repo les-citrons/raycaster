@@ -30,10 +30,10 @@ void start() {
 }
 
 void mainloop() {
-	while (!game_started); // Wait for game to start
+	SDL_SetRelativeMouseMode(SDL_TRUE);
 	while (1) {
+		handle_events();
 		draw_view(&main_game);
 		game_step(&main_game);
-		handle_events();
 	}
 }

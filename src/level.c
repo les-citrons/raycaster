@@ -3,6 +3,7 @@
 #include "level.h"
 #include "render.h"
 #include "input_defs.h"
+#include "event.h"
 
 void init_board(struct board *b, unsigned int w, unsigned int h) {
 	b->w = w;
@@ -94,6 +95,13 @@ void game_step(struct game *g) {
 		debug_cool = 10;
 	} else if (debug_cool != 0) {
 		debug_cool -= 1;
+	}
+
+	if (SDL_GetRelativeMouseMode() == SDL_TRUE) {
+		if (check_key(&i_unlock_mouse))
+			SDL_SetRelativeMouseMode(SDL_FALSE);
+		p->angle += mouse_motion * mouse_sensitivity;
+		mouse_motion = 0;
 	}
 }
 

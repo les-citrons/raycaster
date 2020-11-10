@@ -2,6 +2,7 @@
 #include <SDL2/SDL.h>
 #include "event.h"
 #include "render.h"
+#include "input.h"
 
 void handle_events() {
 	SDL_Event e;
@@ -18,6 +19,12 @@ void handle_events() {
 					SDL_DestroyTexture(g_wintex);
 					make_wintex();
 				}
+				break;
+			case SDL_MOUSEBUTTONDOWN:
+				SDL_SetRelativeMouseMode(SDL_TRUE);
+				break;
+			case SDL_MOUSEMOTION:
+				mouse_motion += e.motion.xrel;
 				break;
 		}
 	}

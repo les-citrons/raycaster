@@ -12,8 +12,9 @@ struct input_def i_look_left;
 struct input_def i_look_right;
 struct input_def i_action;
 struct input_def i_fast_look_mod;
+struct input_def i_unlock_mouse;
 struct input_def i_debug;
 
-struct input_def *input_defs[9];
+struct input_def *input_defs[10];
 
 #endif
